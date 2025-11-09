@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>INDOVINA IL REGALO – Federica's Quest</title>
+<style>
+  /* --- INTERNET UGLY / EARLY 2000s - but readable --- */
+  @font-face{
+    font-family: 'ComicSansLike';
+    src: local('Comic Sans MS'), local('ComicSansMS'), local('Comic Sans');
+  }
+  :root{
+    --bg1: #ff3fa1; /* fucsia */
+    --bg2: #00d9ff; /* azzurro elettrico */
+    --accent: #f7ff2b; /* giallo lime */
+    --dark: #1a1414;
+    --wine: #6f1d3a;
+  }
+  html,body{height:100%;margin:0;padding:0;font-family:ComicSansLike, "Trebuchet MS", Arial, sans-serif;background: linear-gradient(135deg,var(--bg1),var(--bg2));color:var(--dark);overflow-x:hidden;-webkit-text-size-adjust:100%;}
+  *{box-sizing:border-box;}
+  .container{max-width:100%;width:100%;min-height:100vh;margin:0;padding:15px;background: repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0 2px, transparent 2px 10px);display:flex;flex-direction:column;justify-content:flex-start;}
+  @media (min-width:480px){.container{padding:20px;}}
+  @media (min-width:768px){.container{max-width:500px;margin:0 auto;border-left:6px solid #ffedc2;border-right:6px solid #ffedc2;box-shadow: 0 0 30px rgba(0,0,0,.2);}}
+  /* Mobile-only warning for landscape/desktop */
+  .mobile-warning{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#ff3fa1;color:#fff;justify-content:center;align-items:center;flex-direction:column;z-index:99999;text-align:center;padding:20px;box-sizing:border-box;}
+  .mobile-warning.show{display:flex;}
+  @media (min-width:768px){.mobile-warning{display:flex !important;}}
+  @media (orientation:landscape) and (max-width:767px){.mobile-warning{display:flex !important;}}
+  .title{
+    font-size:clamp(24px, 7vw, 42px);
+    text-align:center;
+    padding:12px 20px;
+    border-radius:15px;
+    display:inline-block;
+    margin:0 auto ;
+    max-width:95%;
+    font-weight:900;
+    letter-spacing:1px;
+
+    /* neon-style colorful text */
+    background: linear-gradient(90deg,#ff00cc,#ffdd00,#00d9ff,#7bff6e,#ff69b4);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(0,0,0,0.18);
+
+    /* strong multicolored glow */
+    text-shadow:
+      0 2px 6px rgba(255,0,204,0.35),
+      0 6px 20px rgba(0,217,255,0.12),
+      0 0 18px rgba(255,221,0,0.20),
+      0 0 36px rgba(255,105,180,0.14);
+
+    /* velocizza il tremolio: prova .6s (moderato), .35s (veloce), .18s (molto veloce) */
+    animation: neon-shift 3s linear infinite, flicker .35s ease-in-out infinite;
+    border: 0;
+    box-shadow: none;
+  }
+
+  @keyframes neon-shift{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+  }
+
+  /* subtle neon flicker to feel more "neon" */
+  @keyframes flicker{
+    0%{text-shadow:0 2px 6px rgba(255,0,204,0.35),0 6px 20px rgba(0,217,255,0.12),0 0 18px rgba(255,221,0,0.20)}
+    50%{text-shadow:0 2px 8px rgba(255,0,204,0.5),0 8px 26px rgba(0,217,255,0.18),0 0 26px rgba(255,221,0,0.28)}
+    100%{text-shadow:0 2px 6px rgba(255,0,204,0.35),0 6px 20px rgba(0,217,255,0.12),0 0 18px rgba(255,221,0,0.20)}
+  }
+  .subtitle{text-align:center;margin-top:8px;font-size:clamp(14px, 3.5vw, 16px);font-weight:bold;color:#3b2b2b;padding:0 10px;line-height:1.4;}
+  .btn{display:inline-block;margin:15px auto;padding:clamp(12px, 3vw, 16px) clamp(18px, 5vw, 24px);border-radius:15px;background:linear-gradient(135deg,var(--accent) 0%, #ffd800 100%);font-weight:bold;box-shadow:0 6px 0 #d4a000, 0 8px 20px rgba(0,0,0,.3);cursor:pointer;border:4px solid #fff;transition:all .2s ease;font-size:clamp(16px, 4vw, 20px);text-align:center;min-height:48px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;text-shadow:1px 1px 2px rgba(0,0,0,0.2);}
+  .btn::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.5) 50%, transparent 70%);animation:btn-shine 3s infinite;}
+  @keyframes btn-shine{0%{transform:rotate(45deg) translate(-100%, -100%)}100%{transform:rotate(45deg) translate(100%, 100%)}}
+  .btn:hover{transform:translateY(-3px);box-shadow:0 8px 0 #d4a000, 0 12px 25px rgba(0,0,0,.4);}
+  .btn:active{transform:translateY(2px);box-shadow:0 2px 0 #d4a000, 0 4px 10px rgba(0,0,0,.2);}
+  .center{display:flex;align-items:center;flex-direction:column;justify-content:center;text-align:center;width:100%;}
+  .screen{display:none;padding:15px;margin-top:15px;border:4px dashed rgba(0,0,0,.12);background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));min-height:60vh;position:relative;border-radius:12px;width:100%;box-shadow:inset 0 2px 8px rgba(0,0,0,0.05);}
+  .screen.active{display:flex;flex-direction:column;justify-content: flex-start;animation:screen-enter 0.5s ease-out;}
+  @keyframes screen-enter{0%{opacity:0;transform:scale(0.9) translateY(20px)}100%{opacity:1;transform:scale(1) translateY(0)}}
+  /* Progress indicator */
+  .progress-bar{position:fixed;top:0;left:0;width:100%;height:4px;background:rgba(255,255,255,0.3);z-index:9997;}
+  .progress-fill{height:100%;background:linear-gradient(90deg,#ff3fa1,#00d9ff,#f7ff2b);transition:width 0.5s ease;box-shadow:0 0 10px rgba(255,63,161,0.8);}
+  /* Sparkles decoration */
+  @keyframes sparkle{0%,100%{opacity:0;transform:scale(0) rotate(0deg)}50%{opacity:1;transform:scale(1) rotate(180deg)}}
+  .sparkle{position:fixed;font-size:20px;pointer-events:none;animation:sparkle 2s ease-in-out infinite;z-index:9996;}
+  /* Landing page styles */
+  #landing{display:flex;flex-direction:column;align-items:center;text-align:center;padding:clamp(20px, 5vh, 40px) clamp(15px, 4vw, 20px);width:100%;min-height:90vh;justify-content:center;}
+  #landing.hidden{display:none;}
+  .landing-title{font-size:clamp(28px, 8vw, 38px);font-weight:900;margin-bottom:clamp(15px, 3vh, 20px);text-shadow:3px 3px 0 rgba(0,0,0,.2), 0 0 20px rgba(255,63,161,0.5);animation:bounce 2s ease-in-out infinite, color-shift 3s ease-in-out infinite;line-height:1.2;background:linear-gradient(45deg, #ff3fa1, #00d9ff, #f7ff2b, #ff69b4);background-size:300% 300%;-webkit-background-clip:text;background-clip:text;color:transparent;}
+  @keyframes bounce{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-10px) scale(1.05)}}
+  @keyframes color-shift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+  .landing-desc{font-size:clamp(15px, 3.8vw, 18px);margin:clamp(15px, 3vh, 20px) auto;max-width:100%;line-height:1.6;background:rgba(255,255,255,.95);padding:clamp(12px, 3vw, 18px);border-radius:15px;border:4px solid #ffd6ff;box-shadow:0 8px 25px rgba(255,63,161,0.3), inset 0 2px 4px rgba(255,255,255,0.8);position:relative;}
+  .landing-desc::before{content:'✨';position:absolute;top:-15px;left:10px;font-size:24px;animation:float 2s ease-in-out infinite;}
+  .landing-desc::after{content:'✨';position:absolute;bottom:-15px;right:10px;font-size:24px;animation:float 2s ease-in-out infinite 1s;}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  .start-btn-wrapper{margin-top:clamp(20px, 4vh, 30px);width:100%;display:flex;justify-content:center;}
+  /* Success/Error effects */
+  @keyframes shake-error{0%,100%{transform:translateX(0)}10%,30%,50%,70%,90%{transform:translateX(-10px)}20%,40%,60%,80%{transform:translateX(10px)}}
+  @keyframes pulse-success{0%{transform:scale(1);background:#d4ffd4;}25%{transform:scale(1.05);background:#90ff90;}50%{transform:scale(1.1);background:#50ff50;}75%{transform:scale(1.05);background:#90ff90;}100%{transform:scale(1);background:#d4ffd4;}}
+  .error-shake{animation:shake-error 0.5s;}
+  .success-pulse{animation:pulse-success 0.6s;}
+  /* Confetti animation */
+  @keyframes confetti-fall{0%{transform:translateY(-100vh) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+  .confetti-piece{position:fixed;width:10px;height:10px;z-index:9998;animation:confetti-fall 3s linear;pointer-events:none;}
+  .question{font-size:clamp(18px, 4.5vw, 22px);font-weight:bold;line-height:1.3;padding:10px 15px;width:100%;background:linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,214,255,0.9));border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,0.1);border:3px solid rgba(255,255,255,0.5);}
+  .question::before{content:'🎯 ';font-size:1.2em;}
+  .options{display:flex;flex-direction:column;gap:clamp(8px, 2vh, 12px);max-width:100%;margin:15px auto;width:100%;}
+  .opt{padding:clamp(10px, 2.5vw, 14px);border-radius:12px;background:linear-gradient(135deg, #fff7ef, #fffaf5);border:3px solid #ffecdb;cursor:pointer;box-shadow:3px 3px 0 rgba(0,0,0,.08);font-size:clamp(14px, 3.5vw, 16px);line-height:1.4;min-height:48px;display:flex;align-items:center;justify-content:center;text-align:center;transition:all .3s ease;position:relative;overflow:hidden;}
+  .opt::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);transition:left 0.5s;}
+  .opt:hover{transform:translateY(-2px);box-shadow:4px 6px 0 rgba(0,0,0,.12);border-color:#ffd6ff;}
+  .opt:hover::before{left:100%;}
+  .opt:active{transform:scale(0.98) translateY(0);box-shadow:2px 2px 0 rgba(0,0,0,.08);}
+  .small{font-size:clamp(12px, 3vw, 14px);color:#463a3a;line-height:1.4;}
+  .gif{height: 100%;margin:clamp(10px, 2vh, 15px) auto;display:block;border-radius:8px;}
+  .footer-note{font-size:clamp(11px, 2.8vw, 13px);color:#2f2f2f;margin-top:clamp(12px, 2vh, 18px);padding:0 10px;}
+  .confetti{position:absolute;right:8px;top:8px;font-size:28px;transform:rotate(-12deg)}
+  /* memory grid */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;margin:20px 0}
+  .tile{height:128px;width:100%;background:#fff;border:4px solid #ffd6e9;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;box-shadow:4px 4px 0 rgba(0,0,0,.08)}
+  .tile.revealed{background:linear-gradient(180deg,#fff,#ffe9f3)}
+  /* final */
+  .final-title{font-size:34px;background:linear-gradient(90deg,#fff 0 30%, #ffbeda 30% 60%, #fff 60%);padding:10px;border-radius:12px;display:inline-block}
+  .rainbow{background:linear-gradient(90deg,#ff0066,#ffcc00,#00cc66,#00bfff);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:bold}
+  /* custom cursor as wineglass (svg data url) */
+  body{cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><g fill="%231a1414"><path d="M16 2c1.7 0 3 1.3 3 3v5c0 1.8-1.8 3.1-3.5 3-1.7-.1-3.5-1.3-3.5-3V5c0-1.7 1.3-3 3-3zM10 26h12v2H10v-2z"/></g></svg>') 16 0, auto;}
+  /* responsive */
+  @media (max-width:640px){.title{font-size:30px}.btn{font-size:16px;padding:clamp(10px, 2.5vw, 14px) clamp(16px, 4vw, 20px);}}
+  @media (max-width:360px){
+    .landing-title{font-size:26px;}
+    .landing-desc{font-size:14px;}
+    .question{font-size:18px;}
+    .opt{font-size:13px;padding:10px;}
+  }
+  @media (min-height:800px){
+    .screen{min-height:70vh;}
+    #landing{min-height:85vh;}
+  }
+  /* retro borders, pixel decorations */
+  .pixel-border{border:4px outset #fff;padding:clamp(10px, 2vw, 15px);background:rgba(255,255,255,.03);}
+  .badge{display:inline-block;padding:clamp(6px, 1.5vw, 10px) clamp(8px, 2vw, 12px);background:#fff;border-radius:10px;margin-top:clamp(8px, 2vh, 12px);box-shadow:3px 3px 0 rgba(0,0,0,.08);font-size:clamp(13px, 3.2vw, 15px);}
+  .popup{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:#fff;padding:clamp(15px, 4vw, 20px);border:6px solid #ffd6e9;border-radius:12px;display:none;z-index:9999;max-width:90%;width:min(400px, 90vw);}
+  .close{display:inline-block;margin-top:12px;padding:clamp(8px, 2vw, 10px) clamp(10px, 2.5vw, 14px);border-radius:8px;background:#ff69b4;color:#fff;cursor:pointer;font-size:clamp(14px, 3.5vw, 16px);min-height:44px;display:flex;align-items:center;justify-content:center;}
+</style>
+</head>
+<body>
+<!-- Mobile warning -->
+<div class="mobile-warning">
+  <div style="font-size:48px;margin-bottom:20px;animation:bounce 1s ease-in-out infinite;">📱</div>
+  <div style="font-size:24px;font-weight:bold;margin-bottom:10px;">Ops! Gira il telefono</div>
+</div>
+
+<!-- Progress bar -->
+<div class="progress-bar">
+  <div class="progress-fill" id="progressFill" style="width:0%"></div>
+</div>
+
+<div class="container center">
+  <!-- LANDING PAGE -->
+  <div id="landing">
+    <div class="landing-title">✨ INDOVINA IL REGALO ✨</div>
+    <div class="landing-desc">
+      <span style="font-weight: 800;">🎯 Missione Segreta Attivata!</span><br>
+      Benvenuta Federica! Hai ricevuto una missione speciale: scoprire il tuo regalo misterioso attraverso una serie di prove.<br><br>
+      Tra quiz, memory, indovinelli e... un pizzico di gusto, dovrai superare 6 missioni per svelare il mistero! 🕵️‍♀️✨<br><br>
+      Sei pronta per l'avventura?
+    </div>
+    <div class="start-btn-wrapper">
+      <div class="btn" id="startBtn">👉 INIZIA LA MISSIONE 👈</div>
+    </div>
+    <div style="margin-top:20px;font-size:14px;color:#3b2b2b;">
+      💡 Suggerimento: tieni il volume attivo per un'esperienza completa!
+    </div>
+  </div>
+
+  <div class="title" style="display:none;" id="mainTitle">✨ FEDERICAAA! ✨</div>
+  <div class="subtitle" style="display:none;" id="mainSubtitle">Scopri il regalo misterioso</div>
+
+  <!-- SCREENS -->
+  <div id="screen1" class="screen center pixel-border">
+    <div class="question">Federica e lo sport ⚽</div>
+    <div class="options" id="opts1">
+      <div class="opt opt-btn">Pippo Baudo (campione di curling onorario)</div>
+      <div class="opt opt-btn">Giancarlo Bruni (leggenda della briscola)</div>
+      <div class="opt opt-btn">Nessuno, lo sport è una fake news.</div>
+      <div class="opt opt-btn">Forse quello... con la maglietta?</div>
+    </div>
+    <img class="gif" src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTI5ajZjNjBxOXkxM2NxNGZjb2Jvem0wYnl1MDF5aWh1bDRlN2lndiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3HFcLK4IXKoviqvwve/giphy.gif" alt="applausi" onerror="this.style.display='none'" />
+  </div>
+
+  <div id="screen2" class="screen center">
+    <div class="question">MEMORY: L'oggetto misterioso</div>
+    <div class="grid" id="memoryGrid"></div>
+  </div>
+
+  <div id="screen3" class="screen center">
+    <div class="question">Cosa farebbe una vera leader di fronte a una Pandina senza benzina?</div>
+    <div class="options" id="opts3">
+      <div class="opt leader-btn">Ti metti a dare ordini ("Qualcuno risolva!")</div>
+      <div class="opt leader-btn">Cerchi un piano B ("Spingiamola fino al bar più vicino")</div>
+      <div class="opt leader-btn">Aspetti che la benzina torni da sola</div>
+      <div class="opt leader-btn">Ti siedi tranquilla, tiri fuori qualcosa da bere e dici: "Aspettiamo con stile." 🍷</div>
+    </div>
+    <img class="gif" src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExYTE3ZTRhcnZsdHB6dnkydmFsbGdmYmx6cW00dHlrbGh3dzdqOXNqYiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/h5oQklNzOzzKrnYx1p/giphy.gif" alt="pandina" onerror="this.style.display='none'" />
+  </div>
+
+  <div id="screen4" class="screen center">
+    <div class="question">In cucina, Federica è… 👩‍🍳</div>
+    <div class="options" id="opts4">
+      <div class="opt cook-btn">"Sono la Gordon Ramsay della carbonara!"</div>
+      <div class="opt cook-btn">"Mi serve un aiutante, ma lo guiderò da leader (forse)"</div>
+      <div class="opt cook-btn">"Ordiniamo sushi?"</div>
+      <div class="opt cook-btn">"Non so che sto facendo, ma ci metto amore (e vino)."</div>
+    </div>
+    <img class="gif" src="https://media.giphy.com/media/11sBLVxNs7v6WA/giphy.gif" alt="chef hat" onerror="this.style.display='none'" />
+  </div>
+
+  <div id="screen5" class="screen center">
+    <div class="question">INDOVINELLO: Il profumo del mistero</div>
+    <div class="small">"Non sono un profumo, ma tutti mi annusano. Non sono acqua, ma scorro. Non sono un tesoro, ma brillo al sole. Chi sono?"</div>
+    <div style="margin-top:15px;width:100%;"><input id="riddleInput" placeholder="Digita la risposta..." style="padding:clamp(10px, 2.5vw, 12px);border-radius:8px;border:3px solid #ffe6f0;font-size:clamp(14px, 3.5vw, 16px);width:100%;max-width:100%;box-sizing:border-box;font-family:inherit;" /></div>
+    <div style="margin-top:15px;width:100%;" class="options">
+      <div class="opt riddleOpt">Il profumo di una rosa</div>
+      <div class="opt riddleOpt">Il vino</div>
+      <div class="opt riddleOpt">La benzina</div>
+    </div>
+    <div class="small footer-note">Puoi digitare o scegliere. Pronta per il gran finale?</div>
+  </div>
+
+  <div id="screen6" class="screen center">
+    <div class="final-title rainbow">🎁 COMPLIMENTI FEDERICA!!! 🎁</div>
+    <div style="margin-top:clamp(12px, 3vh, 16px);font-size:clamp(16px, 4vw, 18px);padding:0 10px;">Hai completato <strong>Indovina il Regalo!</strong></div>
+    <div style="margin-top:clamp(10px, 2vh, 12px);font-size:clamp(18px, 4.5vw, 20px);padding:0 10px;">Il tuo premio per astuzia, humor e stile è...</div>
+    <div style="margin-top:clamp(15px, 3vh, 18px);font-size:clamp(20px, 5.5vw, 26px);color:var(--wine);font-weight:bold;padding:0 10px;line-height:1.3;">🍇 UNA VISITA IN CANTINA CON DEGUSTAZIONE DI VINI! 🍷</div>
+    <div class="gif" style="max-width:min(360px, 85vw);margin-top:clamp(10px, 2vh, 15px);"><img src="https://media.giphy.com/media/l41lI4bYmcsPJX9Go/giphy.gif" alt="celebrate" style="max-width:100%;border-radius:8px;" onerror="this.style.display='none'"></div>
+    <div class="badge">Prepara la Pandina, il calice e il navigatore!</div>
+    <div style="margin-top:clamp(15px, 3vh, 20px);width:100%;display:flex;justify-content:center;">
+      <div class="btn" id="detailsBtn">VEDI I DETTAGLI</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- popup details -->
+<div id="popup" class="popup">
+  <div style="font-size:clamp(16px, 4vw, 18px);font-weight:bold;margin-bottom:12px;">Dettagli del regalo 🎁</div>
+  <div style="margin-top:10px;font-size:clamp(14px, 3.5vw, 15px);line-height:1.5;">📅 <strong>Data:</strong> <em>Da definire insieme</em></div>
+  <div style="margin-top:8px;font-size:clamp(14px, 3.5vw, 15px);line-height:1.5;">📍 <strong>Luogo:</strong> Cantina selezionata – degustazione guidata per te e amici</div>
+  <div style="margin-top:12px;font-size:clamp(12px, 3vw, 14px);line-height:1.4;" class="small">🍷 Non è un buono riutilizzabile: la visita va prenotata, ma il regalo è tutto per te ❤️</div>
+  <div style="display:flex;justify-content:center;width:100%;margin-top:15px;">
+    <div class="close" id="closePopup">Chiudi</div>
+  </div>
+</div>
+
+<script>
+/* ====== JS: logica dei giochi + effetti sonori via WebAudio ====== */
+/* Utility suoni semplici (oscillatore) */
+const audioCtx = (window.AudioContext || window.webkitAudioContext) ? new (window.AudioContext||window.webkitAudioContext)() : null;
+function playTone(freq=440, time=0.08, type='sine'){ if(!audioCtx) return; const o=audioCtx.createOscillator(); const g=audioCtx.createGain(); o.type=type; o.frequency.value=freq; o.connect(g); g.connect(audioCtx.destination); g.gain.value=0.0001; o.start(); g.gain.exponentialRampToValueAtTime(0.08, audioCtx.currentTime + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + time); setTimeout(()=>o.stop(), time*1000+50); }
+function playBoing(){ playTone(160,0.28,'sine'); setTimeout(()=>playTone(880,0.06,'square'),140); }
+function playTada(){ playTone(880,0.12,'sawtooth'); setTimeout(()=>playTone(1320,0.08,'sine'),120); }
+
+/* screen flow */
+const screens = ['screen1','screen2','screen3','screen4','screen5','screen6'];
+let current = 0;
+function showScreen(i){
+  screens.forEach((id,idx)=> document.getElementById(id).classList.toggle('active', idx===i));
+  current = i;
+  updateProgress();
+}
+
+/* Progress bar update */
+function updateProgress(){
+  const progress = ((current + 1) / screens.length) * 100;
+  document.getElementById('progressFill').style.width = progress + '%';
+}
+
+/* Sparkle background decoration */
+function createSparkles(){
+  setInterval(()=>{
+    const sparkle = document.createElement('div');
+    sparkle.className = 'sparkle';
+    sparkle.textContent = ['✨','⭐','💫','🌟'][Math.floor(Math.random()*4)];
+    sparkle.style.left = Math.random() * 100 + '%';
+    sparkle.style.top = Math.random() * 100 + '%';
+    sparkle.style.animationDelay = Math.random() * 2 + 's';
+    document.body.appendChild(sparkle);
+    setTimeout(()=>sparkle.remove(), 4000);
+  }, 3000);
+}
+
+/* Haptic feedback for mobile */
+function vibrate(pattern = 50){
+  if('vibrate' in navigator){
+    navigator.vibrate(pattern);
+  }
+}
+
+/* start button */
+document.getElementById('startBtn').addEventListener('click',()=>{
+  playTada();
+  vibrate([50, 30, 50]);
+  createConfetti(20);
+  document.getElementById('landing').classList.add('hidden');
+  document.getElementById('mainTitle').style.display='block';
+  document.getElementById('mainSubtitle').style.display='block';
+  setTimeout(()=> showScreen(0), 500);
+  createSparkles(); // Start ambient sparkles
+});
+
+/* SCREEN 1: sport quiz logic */
+document.querySelectorAll('#opts1 .opt').forEach(opt=>{
+  opt.addEventListener('click',()=>{
+    const txt = opt.textContent.trim();
+    if(txt.includes('Nessuno')){
+      // correct
+      playTada();
+      vibrate([50, 30, 50, 30, 50]);
+      opt.classList.add('success-pulse');
+      createConfetti(15);
+      flashMessage("🎉 Bravissima! Lo sport non è la tua specialità... ma forse lo sarà qualcos'altro?");
+      setTimeout(()=> showScreen(1), 1500);
+    } else {
+      // wrong
+      playBoing();
+      vibrate([100, 50, 100]);
+      opt.classList.add('error-shake');
+      setTimeout(()=> opt.classList.remove('error-shake'), 500);
+      createSadEmojis();
+      flashMessage("❌ Ops! Prova ancora (o abbraccia la Pippo-philosophy).");
+    }
+  });
+});
+
+/* helper: flash message (temporary) */
+function flashMessage(msg){
+  const el = document.createElement('div');
+  el.style.position='fixed';
+  el.style.left='50%';
+  el.style.top='12%';
+  el.style.transform='translateX(-50%) scale(0.8)';
+  el.style.background='linear-gradient(135deg, #fff, #ffe9f3)';
+  el.style.padding='15px 25px';
+  el.style.border='4px solid #ff69b4';
+  el.style.borderRadius='15px';
+  el.style.zIndex=9999;
+  el.style.fontWeight='bold';
+  el.style.boxShadow='0 8px 25px rgba(255,63,161,0.5)';
+  el.style.fontSize='clamp(14px, 3.5vw, 16px)';
+  el.style.maxWidth='85vw';
+  el.style.textAlign='center';
+  el.style.transition='all 0.3s ease';
+  el.textContent=msg;
+  document.body.appendChild(el);
+  setTimeout(()=> el.style.transform='translateX(-50%) scale(1)', 50);
+  setTimeout(()=>{ 
+    el.style.transition='all .4s ease';
+    el.style.opacity=0; 
+    el.style.transform='translateX(-50%) scale(0.8) translateY(-20px)';
+    setTimeout(()=>el.remove(),420); 
+  },1600);
+}
+function shake(node){
+  node.style.transition='transform .07s'; node.style.transform='translateX(-6px)';
+  setTimeout(()=> node.style.transform='translateX(6px)',70);
+  setTimeout(()=> node.style.transform='translateX(0)',140);
+}
+
+/* SCREEN 2: memory */
+const images = [
+  {id:'uva', label:'UVA', emoji:'🍇'},
+  {id:'bicchiere', label:'BICCHIERE', emoji:'🥂'},
+  {id:'campo', label:'CAMPO', emoji:'🌄'},
+  {id:'bottiglia', label:'BOTTIGLIA', emoji:'🍾'},
+  {id:'formaggio', label:'FORMAGGIO', emoji:'🧀'},
+  {id:'sole', label:'SOLE', emoji:'☀️'}
+];
+let memTiles = [];
+let firstPick = null;
+let matched = 0;
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]] } return a; }
+function buildMemory(){
+  const grid = document.getElementById('memoryGrid');
+  grid.innerHTML='';
+  // create pairs by duplicating some items (3 pairs)
+  const pairItems = shuffle(images.slice()).slice(0,3);
+  let pool = shuffle(pairItems.concat(pairItems));
+  pool.forEach((it, idx)=>{
+    const tile = document.createElement('div');
+    tile.className='tile';
+    tile.dataset.key=it.id;
+    tile.innerHTML='<span style="font-size:30px">❓</span>';
+    tile.addEventListener('click',()=> revealTile(tile,it));
+    grid.appendChild(tile);
+  });
+  matched = 0; firstPick = null;
+}
+function revealTile(tile,it){
+  if(tile.classList.contains('revealed')) return;
+  tile.classList.add('revealed');
+  tile.innerHTML = `<div style="font-size:28px">${it.emoji}<div style="font-size:12px;margin-top:6px">${it.label}</div></div>`;
+  if(!firstPick){ firstPick = {tile,it}; return; }
+  // compare
+  if(firstPick.it.id === it.id){
+    playTada();
+    matched += 1;
+    firstPick=null;
+    if(matched === 3){
+      setTimeout(()=>{ flashMessage("Hai svelato alcuni pezzi del mistero..."); setTimeout(()=> showScreen(2),900) },800);
+    }
+  } else {
+    playBoing();
+    const prev = firstPick.tile;
+    setTimeout(()=>{ tile.classList.remove('revealed'); tile.innerHTML='<span style="font-size:30px">❓</span>'; prev.classList.remove('revealed'); prev.innerHTML='<span style="font-size:30px">❓</span>'; firstPick=null },800);
+  }
+}
+
+/* prepare memory board when entering screen2 */
+document.getElementById('screen2').addEventListener('transitionstart',()=>{ buildMemory(); }); // not reliable; we'll init on show
+// init explicitly on script load if start shows screen1 then to screen2:
+buildMemory();
+
+/* when screen1 -> screen2 navigation called by showScreen(1) earlier, screen2 will be visible */
+
+/* SCREEN 3: Pandina leader scenario */
+document.querySelectorAll('#opts3 .leader-btn').forEach(opt=>{
+  opt.addEventListener('click', ()=>{
+    const txt = opt.textContent;
+    if(txt.includes('Aspetti con stile') || txt.includes('Aspettiamo con stile')){
+      playTada();
+      vibrate([50, 30, 50, 30, 50]);
+      opt.classList.add('success-pulse');
+      createConfetti(15);
+      flashMessage("✨ La calma e il gusto sono le vere armi del leader moderno!");
+      document.getElementById('screen3').style.background='linear-gradient(90deg,#fff0f6,#fff8f2)';
+      setTimeout(()=> showScreen(3),1500);
+    } else {
+      playBoing();
+      vibrate([100, 50, 100]);
+      opt.classList.add('error-shake');
+      setTimeout(()=> opt.classList.remove('error-shake'), 500);
+      createSadEmojis();
+      flashMessage("❌ Ehm... Prova qualcosa di più style.");
+    }
+  });
+});
+
+/* SCREEN 4: cucina quiz - one correct */
+document.querySelectorAll('#opts4 .cook-btn').forEach(opt=>{
+  opt.addEventListener('click', ()=>{
+    const txt = opt.textContent;
+    if(txt.includes('Mi serve un aiutante')){
+      playTada();
+      vibrate([50, 30, 50, 30, 50]);
+      opt.classList.add('success-pulse');
+      createConfetti(15);
+      flashMessage("👩‍🍳 Leader in forno! (E il bicchiere è già pronto.)");
+      setTimeout(()=> showScreen(4),1500);
+    } else {
+      playBoing();
+      vibrate([100, 50, 100]);
+      opt.classList.add('error-shake');
+      setTimeout(()=> opt.classList.remove('error-shake'), 500);
+      createSadEmojis();
+      flashMessage("❌ Delizioso, ma forse non è il top per la missione.");
+    }
+  });
+});
+
+/* SCREEN 5: riddles */
+document.querySelectorAll('.riddleOpt').forEach(opt=>{
+  opt.addEventListener('click', ()=> handleRiddle(opt.textContent.trim()));
+});
+document.getElementById('riddleInput').addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter') handleRiddle(e.target.value.trim());
+});
+function handleRiddle(answer){
+  const low = answer.toLowerCase();
+  if(low.includes('vino') || low.includes('wine')){
+    playTada();
+    vibrate([50, 30, 50, 30, 100]);
+    createConfetti(30);
+    createWineGlassRain();
+    document.body.style.background = 'linear-gradient(135deg,#ff3fa1,#7a1530)';
+    flashMessage("🍷 Hai indovinato! Il mistero sta per essere svelato...");
+    setTimeout(()=> showScreen(5),1500);
+  } else {
+    playBoing();
+    vibrate([100, 50, 100]);
+    createSadEmojis();
+    flashMessage("❌ Nope! Prova ancora (considera un bicchiere).");
+  }
+}
+
+/* SCREEN 6 details popup */
+document.getElementById('detailsBtn').addEventListener('click', ()=> { 
+  document.getElementById('popup').style.display='block'; 
+  playTada(); 
+  vibrate([50, 30, 50]);
+  showConfettiOnFinal();
+});
+document.getElementById('closePopup').addEventListener('click', ()=> { 
+  document.getElementById('popup').style.display='none'; 
+  playBoing(); 
+  vibrate(30);
+});
+
+/* make sure navigation indices match storyboard:
+   showScreen(0) => screen1 (sport)
+   showScreen(1) => screen2 (memory)
+   showScreen(2) => screen3 (pandina)
+   showScreen(3) => screen4 (cucina)
+   showScreen(4) => screen5 (indovinello)
+   showScreen(5) => screen6 (finale)
+*/
+
+/* support: if user lands and clicks next step by keyboard, we'll allow progression by winning conditions only (no forced skip). */
+
+/* small accessibility: focus on start button */
+document.getElementById('startBtn').focus();
+
+/* Optional: small confetti visual in final screen using simple emoji sprinkle */
+function showConfettiOnFinal(){
+  const container = document.querySelector('#screen6');
+  for(let i=0;i<25;i++){
+    const n = document.createElement('div');
+    n.style.position='absolute';
+    n.style.left = `${10 + Math.random()*80}%`;
+    n.style.top = `${10 + Math.random()*80}%`;
+    n.style.fontSize = `${16 + Math.random()*28}px`;
+    n.textContent = ['✨','🍇','🎉','🍷','🥂','🎊','⭐'][Math.floor(Math.random()*7)];
+    n.style.opacity=0.9;
+    n.style.animation = `sparkle ${2 + Math.random()*2}s ease-in-out infinite`;
+    n.style.animationDelay = `${Math.random()}s`;
+    container.appendChild(n);
+    setTimeout(()=> n.remove(),6000);
+  }
+}
+
+/* Wine glass rain effect for riddle success */
+function createWineGlassRain(){
+  for(let i=0;i<15;i++){
+    setTimeout(()=>{
+      const glass = document.createElement('div');
+      glass.textContent = '🍷';
+      glass.style.position = 'fixed';
+      glass.style.left = Math.random() * 100 + '%';
+      glass.style.top = '-50px';
+      glass.style.fontSize = '30px';
+      glass.style.zIndex = '9997';
+      glass.style.transition = 'all 2s ease-in';
+      glass.style.opacity = '0.9';
+      document.body.appendChild(glass);
+      setTimeout(()=>{
+        glass.style.top = '120vh';
+        glass.style.transform = `rotate(${360 + Math.random()*360}deg)`;
+        glass.style.opacity = '0';
+      }, 50);
+      setTimeout(()=>glass.remove(), 2100);
+    }, i * 100);
+  }
+}
+
+/* Ensure memory board resets when coming back */
+// optional: if someone navigates back - hooks could be added
+
+/* Confetti effect for success */
+function createConfetti(count = 20) {
+  const colors = ['#ff3fa1', '#00d9ff', '#f7ff2b', '#ff69b4', '#ffd700'];
+  for(let i = 0; i < count; i++) {
+    setTimeout(() => {
+      const confetti = document.createElement('div');
+      confetti.className = 'confetti-piece';
+      confetti.style.left = Math.random() * 100 + '%';
+      confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+      confetti.style.animationDelay = (Math.random() * 0.5) + 's';
+      document.body.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 5000);
+    }, i * 50);
+  }
+}
+
+/* Sad emojis for wrong answers */
+function createSadEmojis() {
+  const emojis = ['😅', '🤔', '😬', '🙈'];
+  for(let i = 0; i < 5; i++) {
+    setTimeout(() => {
+      const emoji = document.createElement('div');
+      emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      emoji.style.position = 'fixed';
+      emoji.style.left = Math.random() * 80 + 10 + '%';
+      emoji.style.top = '20%';
+      emoji.style.fontSize = '40px';
+      emoji.style.zIndex = '9998';
+      emoji.style.transition = 'all 1s ease-out';
+      emoji.style.opacity = '1';
+      document.body.appendChild(emoji);
+      setTimeout(() => {
+        emoji.style.transform = 'translateY(50vh)';
+        emoji.style.opacity = '0';
+      }, 50);
+      setTimeout(() => emoji.remove(), 1100);
+    }, i * 100);
+  }
+}
+
+</script>
+</body>
+</html>
