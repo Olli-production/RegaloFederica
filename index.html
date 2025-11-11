@@ -108,7 +108,7 @@
     padding:12px 12px 0 12px;
     margin-top:15px;
     border:4px dashed rgba(0,0,0,.12);
-    background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+    background:rgba(255,255,255,0.15);
     /* usa flex per espandersi e scroll interno se necessario */
     flex:1 1 auto;
     position:relative;
@@ -554,18 +554,50 @@ function handleRiddle(answer){
 }
 
 /* SCREEN 6 details popup */
-document.getElementById('detailsBtn').addEventListener('click', ()=> { 
-  document.getElementById('popup').style.display='block'; 
-  playTada(); 
-  vibrate([50, 30, 50]);
-  showConfettiOnFinal();
-});
-document.getElementById('closePopup').addEventListener('click', ()=> { 
-  document.getElementById('popup').style.display='none'; 
-  playBoing(); 
-  vibrate(30);
-});
+// replaced simple listener with robust handlers (supports click + touchend, delegation fallback, blurs active element)
+(function(){
+  const popup = document.getElementById('popup');
+  const detailsBtn = document.getElementById('detailsBtn');
+  const closeBtn = document.getElementById('closePopup');
 
+  function openPopup(e){
+    if(e && e.preventDefault) e.preventDefault();
+    try{ if(document.activeElement && typeof document.activeElement.blur === 'function') document.activeElement.blur(); } catch(e){}
+    if(popup) popup.style.display = 'block';
+    try{ playTada(); vibrate([50,30,50]); showConfettiOnFinal(); } catch(err){}
+  }
+  function closePopupFn(e){
+    if(e && e.preventDefault) e.preventDefault();
+    if(popup) popup.style.display = 'none';
+    try{ playBoing(); vibrate(30); } catch(err){}
+  }
+
+  if(detailsBtn){
+    detailsBtn.addEventListener('click', openPopup, {passive:false});
+    detailsBtn.addEventListener('touchend', (e)=>{ e.preventDefault(); openPopup(e); }, {passive:false});
+  } else {
+    // delegation fallback (in case element not present at script run)
+    document.body.addEventListener('click', function delegated(e){
+      const target = e.target;
+      if(target && (target.id === 'detailsBtn' || (target.closest && target.closest('#detailsBtn')))){
+        openPopup(e);
+      }
+    }, {passive:false});
+    document.body.addEventListener('touchend', function delegatedTouch(e){
+      const target = e.target;
+      if(target && (target.id === 'detailsBtn' || (target.closest && target.closest('#detailsBtn')))){
+        e.preventDefault();
+        openPopup(e);
+      }
+    }, {passive:false});
+  }
+
+  if(closeBtn){
+    closeBtn.addEventListener('click', closePopupFn, {passive:false});
+    closeBtn.addEventListener('touchend', (e)=>{ e.preventDefault(); closePopupFn(e); }, {passive:false});
+  }
+})();
+  
 /* make sure navigation indices match storyboard:
    showScreen(0) => screen1 (sport)
    showScreen(1) => screen2 (memory)
@@ -669,5 +701,4 @@ function createSadEmojis() {
 </script>
 </body>
 </html>
-
 
