@@ -17,11 +17,36 @@
     --dark: #1a1414;
     --wine: #6f1d3a;
   }
-  html,body{height:100%;margin:0;padding:0;font-family:ComicSansLike, "Trebuchet MS", Arial, sans-serif;background: linear-gradient(135deg,var(--bg1),var(--bg2));color:var(--dark);overflow-x:hidden;-webkit-text-size-adjust:100%;}
+  html,body{
+    height:100%;
+    margin:0;
+    padding:0;
+    font-family:ComicSansLike, "Trebuchet MS", Arial, sans-serif;
+    background: linear-gradient(135deg,var(--bg1),var(--bg2));
+    color:var(--dark);
+    overflow:hidden; /* ← blocca lo scroll della pagina (body) */
+    -webkit-text-size-adjust:100%;
+  }
+
   *{box-sizing:border-box;}
-  .container{max-width:100%;width:100%;min-height:100vh;margin:0;padding:15px;background: repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0 2px, transparent 2px 10px);display:flex;flex-direction:column;justify-content:flex-start;}
+
+  .container{
+    /* usa l'altezza esatta della viewport e lascia lo scroll interno al container */
+    height:100vh;
+    max-width:100%;
+    width:100%;
+    margin:0;
+    padding:15px;
+    overflow:auto; /* consente scorrimento solo dentro il container, non sulla pagina */
+    -webkit-overflow-scrolling:touch;
+    background: repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0 2px, transparent 2px 10px);
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+  }
   @media (min-width:480px){.container{padding:20px;}}
   @media (min-width:768px){.container{max-width:500px;margin:0 auto;border-left:6px solid #ffedc2;border-right:6px solid #ffedc2;box-shadow: 0 0 30px rgba(0,0,0,.2);}}
+
   /* Mobile-only warning for landscape/desktop */
   .mobile-warning{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#ff3fa1;color:#fff;justify-content:center;align-items:center;flex-direction:column;z-index:99999;text-align:center;padding:20px;box-sizing:border-box;}
   .mobile-warning.show{display:flex;}
@@ -78,7 +103,20 @@
   .btn:hover{transform:translateY(-3px);box-shadow:0 8px 0 #d4a000, 0 12px 25px rgba(0,0,0,.4);}
   .btn:active{transform:translateY(2px);box-shadow:0 2px 0 #d4a000, 0 4px 10px rgba(0,0,0,.2);}
   .center{display:flex;align-items:center;flex-direction:column;justify-content:center;text-align:center;width:100%;}
-  .screen{display:none;padding:15px;margin-top:15px;border:4px dashed rgba(0,0,0,.12);background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));min-height:60vh;position:relative;border-radius:12px;width:100%;box-shadow:inset 0 2px 8px rgba(0,0,0,0.05);}
+  .screen{
+    display:none;
+    padding:12px 12px 0 12px;
+    margin-top:15px;
+    border:4px dashed rgba(0,0,0,.12);
+    background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+    /* usa flex per espandersi e scroll interno se necessario */
+    flex:1 1 auto;
+    position:relative;
+    border-radius:12px;
+    width:100%;
+    box-shadow:inset 0 2px 8px rgba(0,0,0,0.05);
+    overflow:auto; /* evita che contenuti "sforino" il container principale */
+  }
   .screen.active{display:flex;flex-direction:column;justify-content: flex-start;animation:screen-enter 0.5s ease-out;}
   @keyframes screen-enter{0%{opacity:0;transform:scale(0.9) translateY(20px)}100%{opacity:1;transform:scale(1) translateY(0)}}
   /* Progress indicator */
@@ -115,7 +153,11 @@
   .opt:hover::before{left:100%;}
   .opt:active{transform:scale(0.98) translateY(0);box-shadow:2px 2px 0 rgba(0,0,0,.08);}
   .small{font-size:clamp(12px, 3vw, 14px);color:#463a3a;line-height:1.4;}
-  .gif{height: 100%;margin:clamp(10px, 2vh, 15px) auto;display:block;border-radius:8px;}
+  img.gif{
+    display: block;
+    max-width: 100%;
+    object-fit: contain;
+  }
   .footer-note{font-size:clamp(11px, 2.8vw, 13px);color:#2f2f2f;margin-top:clamp(12px, 2vh, 18px);padding:0 10px;}
   .confetti{position:absolute;right:8px;top:8px;font-size:28px;transform:rotate(-12deg)}
   /* memory grid */
@@ -140,7 +182,6 @@
     #landing{min-height:85vh;}
   }
   /* retro borders, pixel decorations */
-  .pixel-border{border:4px outset #fff;padding:clamp(10px, 2vw, 15px);background:rgba(255,255,255,.03);}
   .badge{display:inline-block;padding:clamp(6px, 1.5vw, 10px) clamp(8px, 2vw, 12px);background:#fff;border-radius:10px;margin-top:clamp(8px, 2vh, 12px);box-shadow:3px 3px 0 rgba(0,0,0,.08);font-size:clamp(13px, 3.2vw, 15px);}
   .popup{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:#fff;padding:clamp(15px, 4vw, 20px);border:6px solid #ffd6e9;border-radius:12px;display:none;z-index:9999;max-width:90%;width:min(400px, 90vw);}
   .close{display:inline-block;margin-top:12px;padding:clamp(8px, 2vw, 10px) clamp(10px, 2.5vw, 14px);border-radius:8px;background:#ff69b4;color:#fff;cursor:pointer;font-size:clamp(14px, 3.5vw, 16px);min-height:44px;display:flex;align-items:center;justify-content:center;}
@@ -180,20 +221,21 @@
   <div class="subtitle" style="display:none;" id="mainSubtitle">Scopri il regalo misterioso</div>
 
   <!-- SCREENS -->
-  <div id="screen1" class="screen center pixel-border">
-    <div class="question">Federica e lo sport ⚽</div>
+  <div id="screen1" class="screen center">
+    <div class="question">Federica e lo sport: quale di questi è uno sportivo famoso? ⚽</div>
     <div class="options" id="opts1">
       <div class="opt opt-btn">Pippo Baudo (campione di curling onorario)</div>
       <div class="opt opt-btn">Giancarlo Bruni (leggenda della briscola)</div>
       <div class="opt opt-btn">Nessuno, lo sport è una fake news.</div>
       <div class="opt opt-btn">Forse quello... con la maglietta?</div>
     </div>
-    <img class="gif" src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTI5ajZjNjBxOXkxM2NxNGZjb2Jvem0wYnl1MDF5aWh1bDRlN2lndiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3HFcLK4IXKoviqvwve/giphy.gif" alt="applausi" onerror="this.style.display='none'" />
+    <img class="gif" src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExbTJ6ZWdwa3N6bG1oODA1b2NxNWE5dWx4dTY2OGZybzdjYXg3N2p6YyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/RNcqq3nTf0bg5osmpY/giphy.gif" alt="applausi" onerror="this.style.display='none'" />
   </div>
 
   <div id="screen2" class="screen center">
     <div class="question">MEMORY: L'oggetto misterioso</div>
     <div class="grid" id="memoryGrid"></div>
+    <img class="gif" src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExemszeGNzOWw2amE5M2kxYWhyZDY2cmRjOXAxbmNkNWFmdm44cW96ZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l2Je6sbvJEn1W9OWQ/giphy.gif" alt="pandina" onerror="this.style.display='none'" />
   </div>
 
   <div id="screen3" class="screen center">
@@ -215,28 +257,27 @@
       <div class="opt cook-btn">"Ordiniamo sushi?"</div>
       <div class="opt cook-btn">"Non so che sto facendo, ma ci metto amore (e vino)."</div>
     </div>
-    <img class="gif" src="https://media.giphy.com/media/11sBLVxNs7v6WA/giphy.gif" alt="chef hat" onerror="this.style.display='none'" />
+    <img class="gif" src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdDdna2tzdXFtNnE1NDdvazJ6N2NndnV6eWQwd251ZHNjZHh5bGhwdCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/cM8RVlwnBVt3hE4WgC/giphy.gif" alt="chef hat" onerror="this.style.display='none'" />
   </div>
 
   <div id="screen5" class="screen center">
-    <div class="question">INDOVINELLO: Il profumo del mistero</div>
-    <div class="small">"Non sono un profumo, ma tutti mi annusano. Non sono acqua, ma scorro. Non sono un tesoro, ma brillo al sole. Chi sono?"</div>
-    <div style="margin-top:15px;width:100%;"><input id="riddleInput" placeholder="Digita la risposta..." style="padding:clamp(10px, 2.5vw, 12px);border-radius:8px;border:3px solid #ffe6f0;font-size:clamp(14px, 3.5vw, 16px);width:100%;max-width:100%;box-sizing:border-box;font-family:inherit;" /></div>
+    <div class="question">INDOVINELLO: <br>Il profumo del mistero</div><br>
+    <div class="small" style="font-size: medium;font-weight: bold;">"Non sono un profumo, ma tutti mi annusano. Non sono acqua, ma scorro. Non sono un tesoro, ma brillo al sole. Chi sono?"</div><br>
     <div style="margin-top:15px;width:100%;" class="options">
       <div class="opt riddleOpt">Il profumo di una rosa</div>
       <div class="opt riddleOpt">Il vino</div>
       <div class="opt riddleOpt">La benzina</div>
     </div>
-    <div class="small footer-note">Puoi digitare o scegliere. Pronta per il gran finale?</div>
+    <img class="gif" src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExMGM3MzBnazFqaGVsODc2dmoxOWI1Ym9wd2hybDRxbzQ2M3N1OWJieiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/RMlLEra8fRDP38oM60/giphy.gif" alt="chef hat" onerror="this.style.display='none'" />
   </div>
 
   <div id="screen6" class="screen center">
-    <div class="final-title rainbow">🎁 COMPLIMENTI FEDERICA!!! 🎁</div>
-    <div style="margin-top:clamp(12px, 3vh, 16px);font-size:clamp(16px, 4vw, 18px);padding:0 10px;">Hai completato <strong>Indovina il Regalo!</strong></div>
-    <div style="margin-top:clamp(10px, 2vh, 12px);font-size:clamp(18px, 4.5vw, 20px);padding:0 10px;">Il tuo premio per astuzia, humor e stile è...</div>
-    <div style="margin-top:clamp(15px, 3vh, 18px);font-size:clamp(20px, 5.5vw, 26px);color:var(--wine);font-weight:bold;padding:0 10px;line-height:1.3;">🍇 UNA VISITA IN CANTINA CON DEGUSTAZIONE DI VINI! 🍷</div>
-    <div class="gif" style="max-width:min(360px, 85vw);margin-top:clamp(10px, 2vh, 15px);"><img src="https://media.giphy.com/media/l41lI4bYmcsPJX9Go/giphy.gif" alt="celebrate" style="max-width:100%;border-radius:8px;" onerror="this.style.display='none'"></div>
-    <div class="badge">Prepara la Pandina, il calice e il navigatore!</div>
+    <div class="final-title rainbow" style="border: 1px solid white;">COMPLIMENTI</div>
+    <div style="margin-top:clamp(12px, 3vh, 16px);font-size:clamp(16px, 4vw, 18px);padding:0 10px;">Hai completato il gioco!</div>
+    <div style="margin-top:clamp(10px, 2vh, 12px);font-size:clamp(18px, 4.5vw, 20px);padding:0 10px;"><strong>Il tuo premio per astuzia, humor e stile è...</strong></div><br>
+    <div style="font-size:clamp(20px, 5.5vw, 26px);color:var(--wine);font-weight:bold;font-weight: bold;">UNA VISITA IN CANTINA CON DEGUSTAZIONE DI VINI! 🍇 🍷</div><br>
+    <div class="gif" style="max-width:min(360px, 85vw);margin-top:clamp(10px, 2vh, 15px);"><img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExMDRoYjljZXJqdjlhanltNzlsdTFoNndsaG56am1uNHhwYnc1bTE0eiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/1GrsfWBDiTN60/giphy.gif" alt="celebrate" style="max-width:100%;border-radius:8px;" onerror="this.style.display='none'"></div>
+    <div class="badge">Prepara il calice e il tuo mood da <strong style="color:#ff00cc">Passenger Princess!</strong></div>
     <div style="margin-top:clamp(15px, 3vh, 20px);width:100%;display:flex;justify-content:center;">
       <div class="btn" id="detailsBtn">VEDI I DETTAGLI</div>
     </div>
@@ -267,9 +308,14 @@ function playTada(){ playTone(880,0.12,'sawtooth'); setTimeout(()=>playTone(1320
 const screens = ['screen1','screen2','screen3','screen4','screen5','screen6'];
 let current = 0;
 function showScreen(i){
-  screens.forEach((id,idx)=> document.getElementById(id).classList.toggle('active', idx===i));
-  current = i;
-  updateProgress();
+  // use rAF to ensure paint on mobile browsers (avoids some iOS race conditions)
+  requestAnimationFrame(()=>{
+    screens.forEach((id,idx)=> document.getElementById(id).classList.toggle('active', idx===i));
+    // remove focus which on iOS can block touch/click sequence
+    try{ if(document.activeElement && typeof document.activeElement.blur === 'function') document.activeElement.blur(); } catch(e){}
+    current = i;
+    updateProgress();
+  });
 }
 
 /* Progress bar update */
@@ -330,7 +376,7 @@ document.querySelectorAll('#opts1 .opt').forEach(opt=>{
       opt.classList.add('error-shake');
       setTimeout(()=> opt.classList.remove('error-shake'), 500);
       createSadEmojis();
-      flashMessage("❌ Ops! Prova ancora (o abbraccia la Pippo-philosophy).");
+      flashMessage("❌ Ma dai Federica... Sei seria?");
     }
   });
 });
@@ -352,7 +398,7 @@ function flashMessage(msg){
   el.style.fontSize='clamp(14px, 3.5vw, 16px)';
   el.style.maxWidth='85vw';
   el.style.textAlign='center';
-  el.style.transition='all 0.3s ease';
+  el.style.transition='all 2s ease';
   el.textContent=msg;
   document.body.appendChild(el);
   setTimeout(()=> el.style.transform='translateX(-50%) scale(1)', 50);
@@ -374,9 +420,6 @@ const images = [
   {id:'uva', label:'UVA', emoji:'🍇'},
   {id:'bicchiere', label:'BICCHIERE', emoji:'🥂'},
   {id:'campo', label:'CAMPO', emoji:'🌄'},
-  {id:'bottiglia', label:'BOTTIGLIA', emoji:'🍾'},
-  {id:'formaggio', label:'FORMAGGIO', emoji:'🧀'},
-  {id:'sole', label:'SOLE', emoji:'☀️'}
 ];
 let memTiles = [];
 let firstPick = null;
@@ -385,6 +428,7 @@ function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.rand
 function buildMemory(){
   const grid = document.getElementById('memoryGrid');
   grid.innerHTML='';
+  grid.style.pointerEvents = 'auto'; // re-enable interactions
   // create pairs by duplicating some items (3 pairs)
   const pairItems = shuffle(images.slice()).slice(0,3);
   let pool = shuffle(pairItems.concat(pairItems));
@@ -393,7 +437,10 @@ function buildMemory(){
     tile.className='tile';
     tile.dataset.key=it.id;
     tile.innerHTML='<span style="font-size:30px">❓</span>';
-    tile.addEventListener('click',()=> revealTile(tile,it));
+    // handle both click and touchend for better iOS responsiveness
+    const handler = ()=> revealTile(tile,it);
+    tile.addEventListener('click', handler, {passive:false});
+    tile.addEventListener('touchend', (e)=>{ e.preventDefault(); handler(); }, {passive:false});
     grid.appendChild(tile);
   });
   matched = 0; firstPick = null;
@@ -401,7 +448,7 @@ function buildMemory(){
 function revealTile(tile,it){
   if(tile.classList.contains('revealed')) return;
   tile.classList.add('revealed');
-  tile.innerHTML = `<div style="font-size:28px">${it.emoji}<div style="font-size:12px;margin-top:6px">${it.label}</div></div>`;
+  tile.innerHTML = `<div style="font-size:28px">${it.emoji}<div style="font-size:12px;font-weight:bold;margin-top:6px">${it.label}</div></div>`;
   if(!firstPick){ firstPick = {tile,it}; return; }
   // compare
   if(firstPick.it.id === it.id){
@@ -409,12 +456,23 @@ function revealTile(tile,it){
     matched += 1;
     firstPick=null;
     if(matched === 3){
-      setTimeout(()=>{ flashMessage("Hai svelato alcuni pezzi del mistero..."); setTimeout(()=> showScreen(2),900) },800);
+      // disable further clicks while we transition (avoids race on iOS)
+      document.getElementById('memoryGrid').style.pointerEvents = 'none';
+      flashMessage("Hai svelato alcuni pezzi del mistero...");
+      // small delay then change screen (use rAF inside showScreen)
+      setTimeout(()=> {
+        try{ if(document.activeElement && typeof document.activeElement.blur === 'function') document.activeElement.blur(); } catch(e){}
+        showScreen(2);
+      }, 600);
     }
   } else {
     playBoing();
     const prev = firstPick.tile;
-    setTimeout(()=>{ tile.classList.remove('revealed'); tile.innerHTML='<span style="font-size:30px">❓</span>'; prev.classList.remove('revealed'); prev.innerHTML='<span style="font-size:30px">❓</span>'; firstPick=null },800);
+    setTimeout(()=>{ 
+      tile.classList.remove('revealed'); tile.innerHTML='<span style="font-size:30px">❓</span>'; 
+      prev.classList.remove('revealed'); prev.innerHTML='<span style="font-size:30px">❓</span>'; 
+      firstPick=null;
+    },800);
   }
 }
 
@@ -435,7 +493,7 @@ document.querySelectorAll('#opts3 .leader-btn').forEach(opt=>{
       opt.classList.add('success-pulse');
       createConfetti(15);
       flashMessage("✨ La calma e il gusto sono le vere armi del leader moderno!");
-      document.getElementById('screen3').style.background='linear-gradient(90deg,#fff0f6,#fff8f2)';
+      //document.getElementById('screen3').style.background='linear-gradient(90deg,#fff0f6,#fff8f2)';
       setTimeout(()=> showScreen(3),1500);
     } else {
       playBoing();
@@ -443,7 +501,7 @@ document.querySelectorAll('#opts3 .leader-btn').forEach(opt=>{
       opt.classList.add('error-shake');
       setTimeout(()=> opt.classList.remove('error-shake'), 500);
       createSadEmojis();
-      flashMessage("❌ Ehm... Prova qualcosa di più style.");
+      flashMessage("❌ Fede... Prova qualcosa di più stiloso.");
     }
   });
 });
