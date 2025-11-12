@@ -102,6 +102,11 @@
   @keyframes btn-shine{0%{transform:rotate(45deg) translate(-100%, -100%)}100%{transform:rotate(45deg) translate(100%, 100%)}}
   .btn:hover{transform:translateY(-3px);box-shadow:0 8px 0 #d4a000, 0 12px 25px rgba(0,0,0,.4);}
   .btn:active{transform:translateY(2px);box-shadow:0 2px 0 #d4a000, 0 4px 10px rgba(0,0,0,.2);}
+  .btn.pressed{
+  transform:translateY(2px);
+  box-shadow:0 2px 0 #d4a000, 0 4px 10px rgba(0,0,0,.2);
+  transition:transform .06s ease;
+}
   .center{display:flex;align-items:center;flex-direction:column;justify-content:center;text-align:center;width:100%;}
   .screen{
     display:none;
@@ -682,6 +687,27 @@ function createSadEmojis() {
   }
 }
 
+// restore tactile "pressed" visual for .btn (pointer/touch/mouse robust)
+(function(){
+  const removePressed = (el) => el.classList.remove('pressed');
+  const addPressed = (el) => el.classList.add('pressed');
+
+  document.querySelectorAll('.btn').forEach(btn=>{
+    // pointer events covers mouse/touch/stylus on modern browsers
+    btn.addEventListener('pointerdown', (e)=>{ addPressed(btn); }, {passive:true});
+    btn.addEventListener('pointercancel', ()=> removePressed(btn));
+    // ensure release anywhere removes state
+    document.addEventListener('pointerup', ()=> removePressed(btn));
+
+    // fallbacks for older iOS where pointer events might not exist
+    btn.addEventListener('touchstart', (e)=>{ addPressed(btn); }, {passive:true});
+    btn.addEventListener('touchcancel', ()=> removePressed(btn));
+    document.addEventListener('touchend', ()=> removePressed(btn));
+
+    btn.addEventListener('mousedown', ()=> addPressed(btn));
+    document.addEventListener('mouseup', ()=> removePressed(btn));
+  });
+})();
 </script>
 </body>
 </html>
